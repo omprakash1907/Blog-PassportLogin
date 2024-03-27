@@ -1,0 +1,143 @@
+<%- include('../Partials/header') %>
+
+  <main id="main" class="main d-flex">
+    <div class="col-12 d-flex  justify-content-between ">
+      <div class=" g-3 col-6 me-3 overflow-y-scroll overflow-x-hidden " style="height: 88vh;">
+
+        <section class="section d-flex   ">
+          <div class="row  ">
+            <% post.forEach((post)=>{ %>
+              <div class="">
+                <div class="card overflow-hidden mb-2 ">
+                  <div class="card-body" style="min-height: 450px;">
+                    <% if (post) { %>
+                      <div class="d-flex  align-items-center  justify-content-between ">
+                        <div class="d-flex  align-items-center">
+                          <h5 class="card-title me-2 ">@<%= post.name %>
+                          </h5><span> <i class="bi bi-patch-check-fill text-primary"></i></span>
+                        </div>
+                        <span class="ms-2">
+                          <%= new Date(parseInt(post.time)).toLocaleString() %>
+                        </span>
+                      </div>
+                      <% } %>
+                        <p>
+                          <%= post.post %>
+                        </p>
+                        <div class="rounded-3 overflow-hidden object-fit-contain  ">
+                          <img src="<%= post.file %>" alt="" class="img-fluid  ">
+                        </div>
+                  </div>
+                </div>
+              </div>
+              <%})%>
+
+          </div>
+
+        </section>
+      </div>
+      <!-- End Page Title -->
+      <div class="col-6  position-relative ">
+        <div class="position-absolute  top-0">
+          <div class="pagetitle card p-3  mb-3">
+            <div class="d-flex justify-content-center ">
+              <div>
+                <img src="assets/img/profile.jpg" alt="Profile" class="rounded-circle img-fluid " width="55"
+                  height="30">
+              </div>
+              <div class="w-100 ms-2">
+                <form action="/dashboard" method="post" enctype="multipart/form-data">
+                  <textarea name="post" id="" cols="50" rows="3" class="form-control w-100 bg-transparent  mb-3   "
+                    placeholder="What is happening ?" required></textarea>
+                  <div class="d-flex justify-content-between align-items-center ">
+                    <label class="btn text-primary fs-6  border-1  border-primary ">
+                      <i class="bi bi-card-image "></i> image
+                      <input type="file" class="d-none" name="file" required />
+                    </label>
+                    <button class="btn btn-primary  rounded-5 px-4">Post</button>
+                  </div>
+                </form>
+              </div>
+            </div>
+          </div>
+          <div class="pagetitle card p-3 w-100 mb-3 ">
+            <h3 class="fw-bold ">Subscribe to Premium</h3>
+            <p>Subscribe to unlock new features and if eligible, receive a share of ads revenue.</p>
+            <button class="btn btn-dark  rounded-5 px-4 w-50 ">Subscribe</button>
+          </div>
+          <div class="pagetitle card p-3 w-100  ">
+            <h3 class="fw-bold "> You might like</h3>
+            <div class="follow-content d-flex  align-content-center justify-content-between mb-3 ">
+              <div class="d-flex align-items-center ">
+                <img src="assets/img/prity.jpg" alt="Profile" class="rounded-circle img-fluid me-2 " width="55"
+                  height="30">
+                <div>
+                  <div class="d-flex  align-items-center">
+                    <h5 class="card-title p-0 m-0  ">Preity G Zinta
+                    </h5><span> <i class="bi bi-patch-check-fill text-primary"></i></span>
+                  </div>
+                  <span>@realpreityzinta</span>
+                </div>
+              </div>
+              <button class="btn btn-dark  rounded-5 px-4 ">Follow</button>
+            </div>
+            <div class="follow-content d-flex  align-content-center justify-content-between  mb-3 ">
+              <div class="d-flex align-items-center ">
+                <img src="assets/img/salman.jpg" alt="Profile" class="rounded-circle img-fluid me-2 " width="55"
+                  height="30">
+                <div>
+                  <div class="d-flex  align-items-center">
+                    <h5 class="card-title p-0 m-0  ">Salman Khan
+                    </h5><span> <i class="bi bi-patch-check-fill text-primary"></i></span>
+                  </div>
+                  <span>@BeingSalmanKhan</span>
+                </div>
+              </div>
+              <button class="btn btn-dark  rounded-5 px-4 ">Follow</button>
+            </div>
+            <div class="follow-content d-flex  align-content-center justify-content-between mb-3 ">
+              <div class="d-flex align-items-center ">
+                <img src="assets/img/ratan.jpg" alt="Profile" class="rounded-circle img-fluid me-2 " width="55"
+                  height="30">
+                <div>
+                  <div class="d-flex  align-items-center">
+                    <h5 class="card-title p-0 m-0  ">Ratan N. Tata
+                    </h5><span> <i class="bi bi-patch-check-fill text-primary"></i></span>
+                  </div>
+                  <span>@RNTata2000</span>
+                </div>
+              </div>
+              <button class="btn btn-dark  rounded-5 px-4 ">Follow</button>
+            </div>
+            <span class="text-primary ">Show more..</span>
+          </div>
+        </div>
+      </div>
+    </div>
+
+
+
+  </main><!-- End #main -->
+
+
+
+
+  <a href="#" class="back-to-top d-flex align-items-center justify-content-center"><i
+      class="bi bi-arrow-up-short"></i></a>
+
+  <!-- Vendor JS Files -->
+  <script src="assets/vendor/apexcharts/apexcharts.min.js"></script>
+  <script src="assets/vendor/bootstrap/js/bootstrap.bundle.min.js"></script>
+  <script src="assets/vendor/chart.js/chart.umd.js"></script>
+  <script src="assets/vendor/echarts/echarts.min.js"></script>
+  <script src="assets/vendor/quill/quill.min.js"></script>
+  <script src="assets/vendor/simple-datatables/simple-datatables.js"></script>
+  <script src="assets/vendor/tinymce/tinymce.min.js"></script>
+  <script src="assets/vendor/php-email-form/validate.js"></script>
+
+  <!-- Template Main JS File -->
+  <script src="assets/js/main.js"></script>
+
+  </body>
+
+  </html>
