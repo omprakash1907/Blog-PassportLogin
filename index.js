@@ -33,39 +33,78 @@ const storage = multer.diskStorage({
 
 const upload = multer({ storage: storage }).single('file')
 
+//-------------------session & passport
+
+const session = require('express-session');
+const passport = require('passport');
+const flash = require('express-flash');
+const LocalStrategy = require('passport-local').Strategy;
+app.use(session({
+  secret: 'secret',
+  resave: false,
+  saveUninitialized: false,
+}));
+
+app.use(passport.initialize());
+app.use(passport.session());
+app.use(flash());
 
 //-------------------auth
 
-const auth = (req, res, next) => {
-  if (!req.cookies.user) {
-    res.redirect('/')
-  } else {
-    next()
+function auth(req, res, next) {
+  if (req.isAuthenticated()) {
+      return next();
   }
+  res.redirect('/');
 }
 
-app.get('/', function (req, res) {
-  if (req.cookies.user) {
-    res.redirect('/dashboard')
-  }
-  res.render('./Pages/login')
-})
 
-app.post('/', async (req, res) => {
-  const { email, password } = req.body;
-  const user = await userModel.findOne({ email: email });
-  if (user) {
-    if (user.password === password) {
-      let minute = 60 * 6000;
-      res.cookie('user', user, { maxAge: minute });
-      res.redirect('/dashboard');
-    }else{
-      res.redirect('/')
-    }
-  }else{
-    res.redirect('/')
+passport.use(new LocalStrategy({
+  usernameField: 'email',
+},
+  async function (email, password, done) {
+      try {
+          const user = await userModel.findOne({ email: email });
+          // console.log(user);
+          if (!user) {
+              return done(null, false, { message: 'Incorrect email.' });
+          }
+          if (user.password !== password) {
+              return done(null, false, { message: 'Incorrect password.' });
+          }
+          return done(null, user);
+      } catch (err) {
+          return done(err);
+      }
+  }
+));
+
+
+
+// Serialize and deserialize user
+passport.serializeUser((user, done) => done(null, user.id));
+
+passport.deserializeUser(async (id, cb) => {
+  try {
+      const userData = await userModel.findById(id);
+      cb(null, userData);
+  } catch (err) {
+      cb(err);
   }
 });
+
+app.get('/', function (req, res) {
+  if (req.isAuthenticated()) {
+    return res.redirect('/dashboard');
+  }
+  res.render('./Pages/login');
+});
+
+app.post('/',  passport.authenticate('local', {
+  successRedirect: '/dashboard',
+  failureRedirect: '/',
+  failureFlash: true
+}));
 
 app.get('/signup', (req, res) => {
   res.render('./Pages/signup')
@@ -74,26 +113,25 @@ app.get('/signup', (req, res) => {
 app.post('/signup', async (req, res) => {
   const newUser = await userModel(req.body)
   const result = newUser.save()
-  console.log(result)
   res.redirect('/')
 })
 
 app.get('/dashboard', auth, async (req, res) => {
   const post = await postModel.find({}) 
-  const user = req.cookies.user;
-  console.log(post)
+  // const user = await userModel.find({})
+  const user = req.user.name
   res.render('./Pages/hero', { post: post, user: user });
 })
 
 app.post('/dashboard', auth, async (req, res) => {
-  const user = req.cookies.user;
+  const user = req.user.name
   upload(req, res, async function(){
     if(req.file){
       var details = {
         file : req.file.filename,
         post : req.body.post,
         time : Date.now(),
-        name : user.name
+        name : user
       }
       const post = await postModel(details)
       const result = post.save()
@@ -104,12 +142,16 @@ app.post('/dashboard', auth, async (req, res) => {
   })
 })
 
-app.get('/signout', function (req, res) {
-  if (req.cookies.user) {
-    res.clearCookie('user');
-    res.redirect('/')
-  }
-})
+// logout
+app.get('/signout', (req, res) => {
+  req.logout(function (err) {
+    if (err) {
+        console.error(err);
+        return res.redirect('/');
+    }
+    res.redirect('/');
+});
+});
 
 
 app.listen((3000), () => {
